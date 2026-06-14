@@ -1,4 +1,7 @@
-const CLOUD_NAME = "SEU_CLOUD_NAME";
+// Substitua `SEU_CLOUD_NAME` pelo seu `cloud name` do Cloudinary.
+// Crie um `upload preset` unsigned chamado `casamento_nuno_vanda` no painel
+// do Cloudinary e mantenha o nome abaixo.
+const CLOUD_NAME = "duzytanjy";
 const UPLOAD_PRESET = "casamento_nuno_vanda";
 
 async function uploadFiles() {
@@ -26,13 +29,20 @@ async function uploadFiles() {
             UPLOAD_PRESET
         );
 
-        await fetch(
+        const res = await fetch(
             `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/auto/upload`,
             {
                 method: "POST",
                 body: formData
             }
         );
+
+        if (!res.ok) {
+            const text = await res.text();
+            console.error("Cloudinary upload failed:", res.status, text);
+            status.innerHTML = "Erro no upload. Tente novamente mais tarde.";
+            return;
+        }
     }
 
     status.innerHTML =
