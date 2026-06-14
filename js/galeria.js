@@ -17,7 +17,7 @@ async function carregar() {
 
             gallery.innerHTML += `
             <img
-            src="${item.secure_url}">
+            src="${item.url}">
             `;
         }
 
@@ -26,7 +26,7 @@ async function carregar() {
             gallery.innerHTML += `
             <video controls>
             <source
-            src="${item.secure_url}">
+            src="${item.url}">
             </video>
             `;
         }
