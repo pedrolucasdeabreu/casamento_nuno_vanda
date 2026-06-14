@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Enviar Fotos</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+
+<div class="petals">
+    <span class="petal"></span>
+    <span class="petal"></span>
+    <span class="petal"></span>
+    <span class="petal"></span>
+    <span class="petal"></span>
+    <span class="petal"></span>
+    <span class="petal"></span>
+    <span class="petal"></span>
+    <span class="petal"></span>
+    <span class="petal"></span>
+    <span class="petal"></span>
+    <span class="petal"></span>
+    <span class="petal"></span>
+    <span class="petal"></span>
+    <span class="petal"></span>
+    <span class="petal"></span>
+    <span class="petal"></span>
+    <span class="petal"></span>
+    <span class="petal"></span>
+    <span class="petal"></span>
+</div>
+
+<div class="hearts">
+    <span class="heart"></span>
+    <span class="heart"></span>
+    <span class="heart"></span>
+    <span class="heart"></span>
+    <span class="heart"></span>
+    <span class="heart"></span>
+    <span class="heart"></span>
+    <span class="heart"></span>
+    <span class="heart"></span>
+    <span class="heart"></span>
+    <span class="heart"></span>
+    <span class="heart"></span>
+</div>
+
+<a href="index.html" class="home-btn" title="Página inicial">🏠</a>
+
+<div class="card">
+
+<h1>💍 Nuno & Vanda</h1>
+
+<h2>Partilhe os seus momentos</h2>
+
+<input id="nome" placeholder="Seu nome (opcional)">
+
+<div class="file-input-wrapper">
+    <input type="file" id="files" multiple accept="image/*,video/*,.jpg,.jpeg,.png,.gif,.webp,.heic,.heif,.avif,.mp4,.mov,.m4v,.avi,.wmv,.3gp,.3g2,.mkv,.webm" hidden>
+    <label for="files" class="file-btn">Selecionar fotos ou vídeos</label>
+    <span id="fileInfo">Nenhum arquivo selecionado</span>
+</div>
+
+<button type="button" id="btnEnviar" onclick="uploadFiles()" disabled>
+Enviar
+</button>
+
+<div id="status"></div>
+
+</div>
+
+<script src="js/upload.js"></script>
+
+<script>
+
+const desafio =
+    localStorage.getItem(
+        "desafioAtual"
+    );
+
+if (desafio) {
+
+    document.getElementById(
+        "desafioAtual"
+    ).style.display = "block";
+
+    document.getElementById(
+        "desafioAtual"
+    ).innerHTML =
+
+        "<strong>🎲 Seu desafio:</strong><br><br>" +
+
+        desafio;
+
+}
+
+</script>
+
+</body>
+</html>
