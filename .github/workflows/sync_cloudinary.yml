@@ -24,10 +24,23 @@ jobs:
           API_SECRET: ${{ secrets.CLOUDINARY_API_SECRET }}
         run: |
           set -e
+
+          echo "=== A buscar imagens ==="
           curl -s -u "$API_KEY:$API_SECRET" "https://api.cloudinary.com/v1_1/$CLOUD_NAME/resources/image?max_results=500&prefix=casamento_nuno_vanda" -o /tmp/images.json
+          echo "=== Resposta imagens ==="
+          cat /tmp/images.json | jq .
+
+          echo "=== A buscar videos ==="
           curl -s -u "$API_KEY:$API_SECRET" "https://api.cloudinary.com/v1_1/$CLOUD_NAME/resources/video?max_results=500&prefix=casamento_nuno_vanda" -o /tmp/videos.json || true
+          echo "=== Resposta videos ==="
+          cat /tmp/videos.json | jq .
+
+          echo "=== Todas as imagens sem prefix (para ver os public_ids reais) ==="
+          curl -s -u "$API_KEY:$API_SECRET" "https://api.cloudinary.com/v1_1/$CLOUD_NAME/resources/image?max_results=10" | jq '[.resources[] | {public_id, secure_url}]'
+
           [ -s /tmp/images.json ] || echo '{}' > /tmp/images.json
           [ -s /tmp/videos.json ] || echo '{}' > /tmp/videos.json
+
           jq -s '
             def extract:
               if type == "object" then (.resources // [])
@@ -51,6 +64,9 @@ jobs:
                 contributor: (.context.contributor // null)
               })
           ' /tmp/images.json /tmp/videos.json > data/gallery.json
+
+          echo "=== gallery.json gerado ==="
+          cat data/gallery.json | jq .
 
       - name: Commit data/gallery.json
         run: |
