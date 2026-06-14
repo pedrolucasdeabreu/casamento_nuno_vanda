@@ -102,31 +102,4 @@ document.addEventListener('DOMContentLoaded', () => {
     const galleryEl = document.getElementById('gallery');
     if (galleryEl) loadGallery(galleryEl);
 
-    const openBtn = document.getElementById('openGallery');
-    if (openBtn) {
-        openBtn.addEventListener('click', (e) => {
-            e.preventDefault();
-            const modal = document.getElementById('galleryModal');
-            const modalGallery = document.getElementById('modalGallery');
-            modal.classList.add('show');
-            modal.setAttribute('aria-hidden', 'false');
-            // load into modal
-            loadGallery(modalGallery);
-        });
-
-        const close = document.getElementById('galleryClose');
-        const backdrop = document.getElementById('galleryBackdrop');
-        function closeModal() {
-            const modal = document.getElementById('galleryModal');
-            modal.classList.remove('show');
-            modal.setAttribute('aria-hidden', 'true');
-            const modalGallery = document.getElementById('modalGallery');
-            if (modalGallery) modalGallery.innerHTML = '';
-        }
-        if (close) close.addEventListener('click', closeModal);
-        if (backdrop) backdrop.addEventListener('click', closeModal);
-        document.addEventListener('keydown', (ev) => {
-            if (ev.key === 'Escape') closeModal();
-        });
-    }
 });
