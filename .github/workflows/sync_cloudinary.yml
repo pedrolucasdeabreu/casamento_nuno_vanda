@@ -3,7 +3,7 @@ name: Sync Cloudinary Gallery
 on:
   workflow_dispatch:
   schedule:
-    - cron: '*/5 * * * *' # a cada 5 minutos
+    - cron: '*/15 * * * *' # a cada X minutos
 
 jobs:
   sync:
