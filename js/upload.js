@@ -48,7 +48,8 @@ async function uploadFiles() {
         if (!res.ok) {
             const text = await res.text();
             console.error("Cloudinary upload failed:", res.status, text);
-            status.innerHTML = "Erro no upload. Tente novamente mais tarde.";
+            console.error("File:", file.name, "Size:", file.size, "Type:", file.type);
+            status.innerHTML = `Erro no upload: ${res.status} - ${text}. Verifique o console do navegador.`;
             return;
         }
     }
