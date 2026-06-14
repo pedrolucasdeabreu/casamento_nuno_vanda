@@ -22,8 +22,8 @@ jobs:
           API_SECRET: ${{ secrets.CLOUDINARY_API_SECRET }}
         run: |
           set -e
-          curl -s -u "$API_KEY:$API_SECRET" "https://api.cloudinary.com/v1_1/$CLOUD_NAME/resources/image?max_results=500" -o /tmp/images.json
-          curl -s -u "$API_KEY:$API_SECRET" "https://api.cloudinary.com/v1_1/$CLOUD_NAME/resources/video?max_results=500" -o /tmp/videos.json || true
+          curl -s -u "$API_KEY:$API_SECRET" "https://api.cloudinary.com/v1_1/$CLOUD_NAME/resources/image?max_results=500&prefix=casamento_nuno_vanda" -o /tmp/images.json
+          curl -s -u "$API_KEY:$API_SECRET" "https://api.cloudinary.com/v1_1/$CLOUD_NAME/resources/video?max_results=500&prefix=casamento_nuno_vanda" -o /tmp/videos.json || true
           jq -s '[ (.[0].resources // []) + (.[1].resources // []) ] | sort_by(.created_at) | reverse | map({ url: .secure_url, public_id: .public_id, format: .format, resource_type: .resource_type, width: .width, height: .height, created_at: .created_at, contributor: (.context.contributor // null) })' /tmp/images.json /tmp/videos.json > data/gallery.json
 
       - name: Commit data/gallery.json

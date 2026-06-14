@@ -3,6 +3,7 @@
 // do Cloudinary e mantenha o nome abaixo.
 const CLOUD_NAME = "duzytanjy";
 const UPLOAD_PRESET = "casamento_nuno_vanda";
+const ASSET_FOLDER = "casamento_nuno_vanda";
 
 async function uploadFiles() {
 
@@ -22,6 +23,9 @@ async function uploadFiles() {
 
     status.innerHTML = "A enviar...";
 
+    const results = [];
+    const errors = [];
+
     for (const file of files) {
 
         const formData = new FormData();
@@ -37,25 +41,50 @@ async function uploadFiles() {
             formData.append("context", `contributor=${nomeInput}`);
         }
 
-        const res = await fetch(
-            `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/auto/upload`,
-            {
-                method: "POST",
-                body: formData
-            }
-        );
+        // Enviar para a pasta do preset (opcional - preset também pode definir folder)
+        if (ASSET_FOLDER) {
+            formData.append("folder", ASSET_FOLDER);
+        }
 
-        if (!res.ok) {
-            const text = await res.text();
-            console.error("Cloudinary upload failed:", res.status, text);
-            console.error("File:", file.name, "Size:", file.size, "Type:", file.type);
-            status.innerHTML = `Erro no upload: ${res.status} - ${text}. Verifique o console do navegador.`;
-            return;
+        try {
+            const res = await fetch(
+                `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/auto/upload`,
+                {
+                    method: "POST",
+                    body: formData
+                }
+            );
+
+            if (!res.ok) {
+                const text = await res.text();
+                console.error("Cloudinary upload failed:", res.status, text);
+                console.error("File:", file.name, "Size:", file.size, "Type:", file.type);
+                errors.push({ file: file.name, status: res.status, message: text });
+                continue; // continuar com os próximos ficheiros
+            }
+
+            const body = await res.json();
+            console.log("Uploaded:", body);
+            results.push({ file: file.name, url: body.secure_url, public_id: body.public_id });
+        } catch (err) {
+            console.error("Upload exception:", err);
+            errors.push({ file: file.name, message: err.message || String(err) });
+            continue;
         }
     }
 
-    status.innerHTML =
-        "Obrigado por partilhar ❤️";
+    // Mostrar resumo ao utilizador
+    if (results.length) {
+        const list = results.map(r => `<li><a href="${r.url}" target="_blank" rel="noreferrer">${r.file}</a></li>`).join("");
+        status.innerHTML = `Obrigado por partilhar ❤️<br><ul>${list}</ul>`;
+    } else if (!errors.length) {
+        status.innerHTML = "Nenhum ficheiro processado.";
+    }
+
+    if (errors.length) {
+        const errList = errors.map(e => `<li>${e.file}: ${e.status ? e.status + ' - ' : ''}${e.message}</li>`).join("");
+        status.innerHTML += `<br><strong>Erros:</strong><ul>${errList}</ul>`;
+    }
 }
 
 document.addEventListener("DOMContentLoaded", () => {
