@@ -26,7 +26,7 @@ jobs:
           curl -s -u "$API_KEY:$API_SECRET" "https://api.cloudinary.com/v1_1/$CLOUD_NAME/resources/video?max_results=500&prefix=casamento_nuno_vanda" -o /tmp/videos.json || true
           [ -s /tmp/images.json ] || echo '{}' > /tmp/images.json
           [ -s /tmp/videos.json ] || echo '{}' > /tmp/videos.json
-          jq -s 'def extract: if type == "array" then . else (.resources // .) end; ((.[0] | extract) + (.[1] | extract)) | sort_by(.created_at) | reverse | map({ url: .secure_url, public_id: .public_id, format: .format, resource_type: .resource_type, width: .width, height: .height, created_at: .created_at, contributor: (.context.contributor // null) })' /tmp/images.json /tmp/videos.json > data/gallery.json
+          jq -s 'def extract: if type == "array" then . else (.resources // .) end; [.[0], .[1]] | map(extract) | flatten | map(select(type == "object")) | sort_by(.created_at // "") | reverse | map({ url: .secure_url, public_id: .public_id, format: .format, resource_type: .resource_type, width: .width, height: .height, created_at: .created_at, contributor: (.context.contributor // null) })' /tmp/images.json /tmp/videos.json > data/gallery.json
 
       - name: Commit data/gallery.json
         run: |
