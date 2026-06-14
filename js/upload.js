@@ -104,10 +104,9 @@ async function uploadFiles() {
 
     // Mostrar resumo ao utilizador
     if (results.length) {
-        const list = results.map(r => `<li><a href="${r.url}" target="_blank" rel="noreferrer">${r.file}</a></li>`).join("");
-        status.innerHTML = `Obrigado por partilhar ❤️<br><ul>${list}</ul>`;
+        status.textContent = "Obrigado por partilhar ❤️";
     } else if (!errors.length) {
-        status.innerHTML = "Nenhum ficheiro processado.";
+        status.textContent = "Nenhum ficheiro processado.";
     }
 
     if (errors.length) {
