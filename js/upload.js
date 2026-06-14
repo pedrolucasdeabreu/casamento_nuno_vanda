@@ -12,6 +12,9 @@ async function uploadFiles() {
     const status =
         document.getElementById("status");
 
+    const nomeInput =
+        document.getElementById("nome").value.trim();
+
     if (!files.length) {
         status.innerHTML = "Por favor, selecione ao menos uma foto ou vídeo.";
         return;
@@ -28,6 +31,11 @@ async function uploadFiles() {
             "upload_preset",
             UPLOAD_PRESET
         );
+
+        // Guardar o nome como context no Cloudinary
+        if (nomeInput) {
+            formData.append("context", `contributor=${nomeInput}`);
+        }
 
         const res = await fetch(
             `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/auto/upload`,

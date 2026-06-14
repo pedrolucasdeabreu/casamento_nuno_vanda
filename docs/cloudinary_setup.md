@@ -14,6 +14,7 @@ Passos resumidos para fazer uploads diretos do cliente e manter `data/gallery.js
 3) Atualizar cliente
 - No arquivo `js/upload.js` substitua `SEU_CLOUD_NAME` pelo seu `cloud name`.
 - As uploads do cliente usam o `upload preset` unsigned, por isso não expõem segredos.
+- **Novo:** O nome do utilizador é capturado do input e enviado como `context` ao Cloudinary.
 
 4) Configurar GitHub Secrets
 - No repositório GitHub vá a `Settings` → `Secrets and variables` → `Actions` → `New repository secret`.
@@ -25,14 +26,18 @@ Passos resumidos para fazer uploads diretos do cliente e manter `data/gallery.js
 5) O workflow
 - O ficheiro `.github/workflows/sync_cloudinary.yml` faz fetch das imagens e vídeos usando a API Admin do Cloudinary e escreve `data/gallery.json`.
 - O workflow corre a cada hora e também pode ser disparado manualmente em `Actions` → `Sync Cloudinary Gallery`.
+- **Novo:** Extrai o campo `contributor` (nome do utilizador) e inclui em cada item de `gallery.json`.
+- **Novo:** Ordena as imagens por data de criação (mais recentes primeiro).
 
-6) Observações e limitações
+7) Observações e limitações
 - Isto não é em tempo-real: o workflow sincroniza periodicamente (por cron) e ao disparo manual.
 - Se quiser processamento em tempo-real use um servidor ou serviço serverless que receba o webhook do Cloudinary e depois atualize o repositório via GitHub API (requer gestão segura de tokens).
 
-7) Testes locais
-- Faça um upload de teste através do formulário (`upload.html`) e depois dispare o workflow manualmente para atualizar `data/gallery.json`.
+8) Testes locais
+- Faça um upload de teste através do formulário (`upload.html`) com um nome.
+- Dispare o workflow manualmente para atualizar `data/gallery.json`.
+- Confirme que o nome aparece no campo `contributor`.
 
 Se quiser, eu posso:
-- Ajustar `galeria.js` para consumir `data/gallery.json` com ordenação por `created_at`.
-- Implementar uma versão do workflow que também redimensiona thumbs (usando URL transformations) ou limita resultados.
+- Ajustar `galeria.js` para consumir `data/gallery.json` e exibir o nome do contribuidor junto com cada imagem.
+- Implementar uma versão do workflow que também redimensiona thumbs (usando URL transformations).
