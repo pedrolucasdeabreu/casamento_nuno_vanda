@@ -77,7 +77,7 @@
                 🎲 Gerar Desafios
             </a>
 
-            <a href="galeria.html" class="btn">
+            <a href="galeria.html" class="btn" id="openGallery">
                 🖼️ Ver Galeria
             </a>
 
@@ -85,6 +85,18 @@
 
     </div>
 
+    <!-- Gallery modal (opened when clicking "Ver Galeria") -->
+    <div id="galleryModal" class="modal" aria-hidden="true">
+        <div class="modal-backdrop" id="galleryBackdrop"></div>
+        <div class="modal-content" role="dialog" aria-modal="true">
+            <button class="modal-close" id="galleryClose">✖</button>
+            <div id="modalGallery"></div>
+        </div>
+    </div>
+
+    <script src="js/galeria.js"></script>
+
 </body>
 
 </html>
+    

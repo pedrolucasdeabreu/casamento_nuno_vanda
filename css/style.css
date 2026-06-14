@@ -398,6 +398,48 @@ input {
     width: 100%;
 }
 
+/* Modal styles for gallery preview */
+.modal {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 60;
+    align-items: center;
+    justify-content: center;
+}
+.modal.show { display: flex; }
+.modal-backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(10,10,10,0.55);
+    backdrop-filter: blur(2px);
+}
+.modal-content {
+    position: relative;
+    z-index: 61;
+    max-width: min(1100px, 96%);
+    max-height: 86vh;
+    overflow: auto;
+    background: rgba(255,255,255,0.98);
+    border-radius: 16px;
+    padding: 18px;
+    box-shadow: 0 30px 80px rgba(0,0,0,0.28);
+}
+.modal-close {
+    position: absolute;
+    right: 10px;
+    top: 10px;
+    background: transparent;
+    border: none;
+    font-size: 20px;
+    cursor: pointer;
+}
+#modalGallery {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 10px;
+}
+
 /* ── Buttons: sem fundo nem sombra próprios no desktop ── */
 .buttons {
     display: flex;
