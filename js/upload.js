@@ -90,19 +90,32 @@ async function convertVideoTo1080(file) {
         return file; // fallback
     });
 
-    const targetW = 1920;
-    const targetH = 1080;
+    const sourceW = Number.isFinite(video.videoWidth) && video.videoWidth > 0 ? video.videoWidth : 1920;
+    const sourceH = Number.isFinite(video.videoHeight) && video.videoHeight > 0 ? video.videoHeight : 1080;
+    const isPortrait = sourceH > sourceW;
+    const targetW = isPortrait ? 1080 : 1920;
+    const targetH = isPortrait ? 1920 : 1080;
 
     const canvas = document.createElement('canvas');
     canvas.width = targetW;
     canvas.height = targetH;
     const ctx = canvas.getContext('2d');
 
-    // desenhar frames enquanto o vídeo reproduz
+    // desenhar frames enquanto o vídeo reproduz preservando a proporção e a orientação do vídeo
     let rafId = null;
     function drawFrame() {
         try {
-            ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = '#000000';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            const ratio = Math.min(canvas.width / sourceW, canvas.height / sourceH);
+            const drawW = sourceW * ratio;
+            const drawH = sourceH * ratio;
+            const offsetX = (canvas.width - drawW) / 2;
+            const offsetY = (canvas.height - drawH) / 2;
+
+            ctx.drawImage(video, offsetX, offsetY, drawW, drawH);
         } catch (e) {
             // pode falhar se o vídeo não estiver disponível por qualquer razão
         }
