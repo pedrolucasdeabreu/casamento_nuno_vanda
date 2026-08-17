@@ -339,12 +339,26 @@ transform: none;
 box-shadow: none;
 }
 
-#gallery{
+.gallery-page .card,
+.card {
+width: min(100%, 900px);
+margin: auto;
+padding: 24px;
+background: rgba(255, 255, 255, 0.96);
+border-radius: 30px;
+border: 1px solid rgba(255, 255, 255, 0.9);
+box-shadow: 0 36px 100px rgba(222, 104, 150, 0.24);
+position: relative;
+z-index: 3;
+text-align: center;
+}
+
+.gallery-page #gallery {
 display:grid;
-grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
 gap:18px;
-padding:24px;
-width: min(100%, 1200px);
+padding: 12px 0 0;
+width: min(100%, 900px);
 margin: 0 auto;
 }
 
