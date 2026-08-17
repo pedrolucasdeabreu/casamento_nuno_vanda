@@ -24,6 +24,7 @@ jobs:
           API_SECRET: ${{ secrets.CLOUDINARY_API_SECRET }}
         run: |
           set -e
+          # fetch images and videos from Cloudinary into temp files
           curl -s -u "$API_KEY:$API_SECRET" \
             "https://api.cloudinary.com/v1_1/$CLOUD_NAME/resources/image/upload?max_results=500&prefix=casamento_nuno_vanda" \
             -o /tmp/images.json
@@ -32,6 +33,8 @@ jobs:
             -o /tmp/videos.json || true
           [ -s /tmp/images.json ] || echo '{}' > /tmp/images.json
           [ -s /tmp/videos.json ] || echo '{}' > /tmp/videos.json
+
+          # generate the new gallery into a temp file first
           jq -s '
             def extract:
               if type == "object" then (.resources // [])
@@ -54,7 +57,28 @@ jobs:
                 created_at: .created_at,
                 contributor: (.context.contributor // null)
               })
-          ' /tmp/images.json /tmp/videos.json > data/gallery.json
+          ' /tmp/images.json /tmp/videos.json > /tmp/new_gallery.json
+
+          # compute counts: new vs existing (in repo)
+          new_count=$(jq 'length' /tmp/new_gallery.json || echo 0)
+          if [ -f data/gallery.json ]; then
+            old_count=$(jq 'length' data/gallery.json || echo 0)
+          else
+            old_count=0
+          fi
+
+          echo "New gallery count: $new_count"
+          echo "Existing gallery count: $old_count"
+
+          # if new count is less than existing, explicitly replace (truncate) the repository file
+          # otherwise just overwrite with generated file (both cases we write the new file)
+          if [ "$new_count" -lt "$old_count" ]; then
+            echo "New count is smaller than existing; truncating data/gallery.json to $new_count entries"
+          fi
+
+          # move the new gallery into the repo path (this overwrites and ensures the file matches the new results)
+          mkdir -p data
+          mv /tmp/new_gallery.json data/gallery.json
 
       - name: Commit data/gallery.json
         run: |
