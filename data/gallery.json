@@ -1,25 +1,5 @@
 [
   {
-    "url": "https://res.cloudinary.com/duzytanjy/video/upload/v1787006142/casamento_nuno_vanda/pedro_2026-08-17_23-35-33_01.webm",
-    "public_id": "casamento_nuno_vanda/pedro_2026-08-17_23-35-33_01",
-    "format": "webm",
-    "resource_type": "video",
-    "width": 1920,
-    "height": 1080,
-    "created_at": "2026-08-17T22:35:42Z",
-    "contributor": null
-  },
-  {
-    "url": "https://res.cloudinary.com/duzytanjy/video/upload/v1787005720/casamento_nuno_vanda/null_2026-08-17_23-28-31_01.webm",
-    "public_id": "casamento_nuno_vanda/null_2026-08-17_23-28-31_01",
-    "format": "webm",
-    "resource_type": "video",
-    "width": 1920,
-    "height": 1080,
-    "created_at": "2026-08-17T22:28:40Z",
-    "contributor": null
-  },
-  {
     "url": "https://res.cloudinary.com/duzytanjy/image/upload/v1781451408/casamento_nuno_vanda/pedro_lucas_de_abreu_2026-06-14_16-36-49_01.jpg",
     "public_id": "casamento_nuno_vanda/pedro_lucas_de_abreu_2026-06-14_16-36-49_01",
     "format": "jpg",
