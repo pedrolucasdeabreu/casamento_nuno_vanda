@@ -3,7 +3,22 @@ async function loadGallery(container) {
         if (!container) return; // nothing to do
         const response = await fetch('data/gallery.json?ts=' + Date.now());
         if (!response.ok) throw new Error(response.status + ' ' + response.statusText);
-        const raw = await response.json();
+
+        const text = await response.text();
+        if (!text || !text.trim()) {
+            container.innerHTML = '<p class="empty">Galeria em atualização.</p>';
+            return;
+        }
+
+        let raw;
+        try {
+            raw = JSON.parse(text);
+        } catch (parseError) {
+            console.warn('JSON da galeria inválido, ignorando conteúdo vazio.', text.slice(0, 200));
+            container.innerHTML = '<p class="empty">Galeria em atualização.</p>';
+            return;
+        }
+
         // support either an array or Cloudinary-like object with a `resources` array
         const arquivos = Array.isArray(raw) ? raw : (raw && (raw.resources || raw.files || raw.items) ? (raw.resources || raw.files || raw.items) : []);
 

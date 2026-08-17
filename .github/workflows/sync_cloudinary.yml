@@ -59,6 +59,11 @@ jobs:
               })
           ' /tmp/images.json /tmp/videos.json > /tmp/new_gallery.json
 
+          # guard against empty or malformed output; otherwise we would end up with an empty JSON file and break the gallery
+          if ! jq -e 'type == "array"' /tmp/new_gallery.json >/dev/null 2>&1; then
+            echo '[]' > /tmp/new_gallery.json
+          fi
+
           # compute counts: new vs existing (in repo)
           new_count=$(jq 'length' /tmp/new_gallery.json || echo 0)
           if [ -f data/gallery.json ]; then
