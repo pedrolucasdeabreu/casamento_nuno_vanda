@@ -1,7 +1,7 @@
 async function loadGallery(container) {
     try {
         if (!container) return; // nothing to do
-        const response = await fetch('data/gallery.json');
+        const response = await fetch('data/gallery.json?ts=' + Date.now());
         if (!response.ok) throw new Error(response.status + ' ' + response.statusText);
         const raw = await response.json();
         // support either an array or Cloudinary-like object with a `resources` array
@@ -46,6 +46,8 @@ async function loadGallery(container) {
                 img.loading = 'lazy';
                 img.decoding = 'async';
                 img.alt = item.public_id || '';
+                // if the image fails to load (e.g. was removed from Cloudinary), remove its wrapper to avoid gray placeholders
+                img.onerror = () => { console.warn('Imagem indisponível, removendo:', item.url || item.secure_url); wrapper.remove(); };
                 img.src = getThumbUrl(item, 1200);
                 wrapper.appendChild(img);
                 if (contributor) {
