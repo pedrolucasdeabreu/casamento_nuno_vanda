@@ -356,6 +356,9 @@ text-align: center;
 width: min(100%, 900px);
 padding: 24px;
 display: block;
+height: 520px;
+max-height: 520px;
+overflow: hidden;
 }
 
 .gallery-page #gallery {
@@ -365,6 +368,8 @@ gap:18px;
 padding: 12px 0 0;
 width: min(100%, 900px);
 margin: 0 auto;
+height: calc(100% - 90px);
+overflow: hidden;
 }
 
 #gallery figure {
@@ -388,6 +393,13 @@ display:block;
 border-radius:16px;
 object-fit: contain;
 background: rgba(0, 0, 0, 0.04);
+}
+
+.gallery-page #gallery img,
+.gallery-page #gallery video {
+height: 100%;
+max-height: 100%;
+object-fit: cover;
 }
 
 #gallery figure {
