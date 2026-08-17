@@ -1,7 +1,7 @@
 async function loadGallery(container) {
     try {
         if (!container) return; // nothing to do
-        const response = await fetch('data/gallery.json?ts=' + Date.now());
+        const response = await fetch('data/gallery.json?ts=' + Date.now(), { cache: 'no-store' });
         if (!response.ok) throw new Error(response.status + ' ' + response.statusText);
 
         const text = await response.text();
@@ -25,17 +25,23 @@ async function loadGallery(container) {
         container.innerHTML = '';
         const CLOUD_CHECK = /res\.cloudinary\.com\/.+\/image\/upload|res\.cloudinary\.com\/.+\/video\/upload/;
 
+        const cacheBust = (url) => {
+            if (!url) return url;
+            const suffix = `cache=${Date.now()}`;
+            return url.includes('?') ? `${url}&${suffix}` : `${url}?${suffix}`;
+        };
+
         const getThumbUrl = (item, width = 900) => {
             try {
                 // Prefer using the original URL but insert a Cloudinary transformation
                 const src = item.url || item.secure_url || item.secureUrl || item.src || '';
                 if (!src) return '';
-                if (!src.includes('/upload/')) return src;
+                if (!src.includes('/upload/')) return cacheBust(src);
                 // don't double-insert if there's already a c_ transform present
-                if (src.includes('/upload/c_') || src.match(/\/upload\/.+c_\w+/)) return src;
-                return src.replace('/upload/', `/upload/c_limit,w_${width}/`);
+                if (src.includes('/upload/c_') || src.match(/\/upload\/.+c_\w+/)) return cacheBust(src);
+                return cacheBust(src.replace('/upload/', `/upload/c_limit,w_${width}/`));
             } catch (e) {
-                return item.url || item.secure_url || '';
+                return cacheBust(item.url || item.secure_url || '');
             }
         };
 
@@ -107,7 +113,8 @@ async function loadGallery(container) {
                     video.style.maxHeight = '78vh';
                 }
                 const src = document.createElement('source');
-                src.src = item.url || item.secure_url || item.secureUrl || '';
+                const mediaUrl = item.url || item.secure_url || item.secureUrl || '';
+                src.src = cacheBust(mediaUrl);
                 video.appendChild(src);
 
                 // try to create a poster from Cloudinary if possible
@@ -115,7 +122,7 @@ async function loadGallery(container) {
                     // build an image poster using Cloudinary image transforms
                     try {
                         const posterUrl = (item.url || item.secure_url || item.secureUrl || '').replace('/upload/', '/upload/c_fill,w_800,h_450/');
-                        video.poster = posterUrl;
+                        video.poster = cacheBust(posterUrl);
                     } catch (e) {
                         // ignore
                     }
