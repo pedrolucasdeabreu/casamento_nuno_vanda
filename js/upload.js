@@ -138,15 +138,50 @@ document.addEventListener("DOMContentLoaded", () => {
     ];
 
     const isAllowedFile = (file) => {
-        const type = file.type.toLowerCase();
+        const type = (file.type || '').toLowerCase();
         if (type.startsWith("image/") || type.startsWith("video/")) {
             return true;
         }
-        const name = file.name.toLowerCase();
+        const name = (file.name || '').toLowerCase();
         return allowedExtensions.some(ext => name.endsWith(ext));
     };
 
-    fileInput.addEventListener("change", () => {
+    // Obtém a duração (em segundos) de um File de vídeo usando object URL
+    function getVideoDuration(file) {
+        return new Promise((resolve, reject) => {
+            try {
+                const url = URL.createObjectURL(file);
+                const video = document.createElement('video');
+                video.preload = 'metadata';
+                video.src = url;
+                const clean = () => {
+                    try { URL.revokeObjectURL(url); } catch (e) { /* noop */ }
+                };
+                video.addEventListener('loadedmetadata', () => {
+                    const duration = video.duration;
+                    clean();
+                    // duration pode ser NaN em arquivos inválidos
+                    if (Number.isFinite(duration)) resolve(duration);
+                    else reject(new Error('Duração inválida'));
+                });
+                video.addEventListener('error', (e) => {
+                    clean();
+                    reject(new Error('Erro ao carregar metadata do vídeo'));
+                });
+            } catch (err) {
+                reject(err);
+            }
+        });
+    }
+
+    function formatDuration(seconds) {
+        if (!Number.isFinite(seconds) || seconds < 0) return '–';
+        const s = Math.floor(seconds % 60).toString().padStart(2, '0');
+        const m = Math.floor(seconds / 60).toString().padStart(2, '0');
+        return `${m}:${s}`;
+    }
+
+    fileInput.addEventListener("change", async () => {
         const files = Array.from(fileInput.files);
         const invalidFiles = files.filter(file => !isAllowedFile(file));
         const count = files.length;
@@ -158,10 +193,44 @@ document.addEventListener("DOMContentLoaded", () => {
             return;
         }
 
-        status.textContent = "";
-        sendButton.disabled = count === 0;
-        fileInfo.textContent = count
-            ? `${count} arquivo(s) selecionado(s)`
-            : "Nenhum arquivo selecionado";
+        const videoFiles = files.filter(f => (f.type || '').toLowerCase().startsWith('video/'));
+        if (videoFiles.length === 0) {
+            // nenhum vídeo — comportamento padrão
+            status.textContent = "";
+            sendButton.disabled = count === 0;
+            fileInfo.textContent = count
+                ? `${count} arquivo(s) selecionado(s)`
+                : "Nenhum arquivo selecionado";
+            return;
+        }
+
+        // Validar duração dos vídeos (máx. 120 segundos = 2 minutos)
+        const MAX_SECONDS = 120;
+        status.textContent = 'A validar duração dos vídeos...';
+        sendButton.disabled = true;
+
+        try {
+            const durations = await Promise.all(videoFiles.map(f => getVideoDuration(f)));
+            const tooLongIndex = durations.findIndex(d => d > MAX_SECONDS);
+            if (tooLongIndex !== -1) {
+                const vf = videoFiles[tooLongIndex];
+                const dur = durations[tooLongIndex];
+                fileInfo.textContent = `O vídeo "${vf.name}" tem ${formatDuration(dur)} (limite ${formatDuration(MAX_SECONDS)}). Seleccione um vídeo com até 2 minutos.`;
+                status.textContent = "Vídeo demasiado longo (> 2 minutos).";
+                sendButton.disabled = true;
+                return;
+            }
+
+            // todos os vídeos estão dentro do limite
+            status.textContent = "";
+            sendButton.disabled = count === 0;
+            fileInfo.textContent = count
+                ? `${count} arquivo(s) selecionado(s)`
+                : "Nenhum arquivo selecionado";
+        } catch (err) {
+            console.error('Erro ao validar duração dos vídeos:', err);
+            status.textContent = 'Erro ao validar vídeos. Tente novamente.';
+            sendButton.disabled = true;
+        }
     });
 });
