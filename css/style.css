@@ -352,6 +352,12 @@ z-index: 3;
 text-align: center;
 }
 
+.gallery-page .card {
+width: min(100%, 900px);
+padding: 24px;
+display: block;
+}
+
 .gallery-page #gallery {
 display:grid;
 grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
@@ -400,9 +406,10 @@ max-height: 70vh;
 
 .titulo {
     text-align: center;
-    margin: 72px auto 24px;
-    font-size: 2.8rem;
+    margin: 0 auto 16px;
+    font-size: clamp(2.2rem, 4vw, 3.4rem);
     width: min(100%, 700px);
+    line-height: 1.1;
 }
 
 .desafio-box {
