@@ -35,6 +35,23 @@ async function loadGallery(container) {
             return '';
         };
 
+        const getAspectRatio = (item) => {
+            const width = Number(item && item.width) || 0;
+            const height = Number(item && item.height) || 0;
+            if (width > 0 && height > 0) return `${width} / ${height}`;
+            return '4 / 3';
+        };
+
+        const applyMediaFit = (media, item) => {
+            media.style.display = 'block';
+            media.style.width = '100%';
+            media.style.maxWidth = '100%';
+            media.style.objectFit = 'contain';
+            media.style.aspectRatio = getAspectRatio(item);
+            media.style.borderRadius = '16px';
+            media.style.background = 'rgba(0, 0, 0, 0.04)';
+        };
+
         arquivos.forEach(item => {
             const contributor = getContributor(item);
             // determine resource type with fallbacks
@@ -49,6 +66,7 @@ async function loadGallery(container) {
                 // if the image fails to load (e.g. was removed from Cloudinary), remove its wrapper to avoid gray placeholders
                 img.onerror = () => { console.warn('Imagem indisponível, removendo:', item.url || item.secure_url); wrapper.remove(); };
                 img.src = getThumbUrl(item, 1200);
+                applyMediaFit(img, item);
                 wrapper.appendChild(img);
                 if (contributor) {
                     const cap = document.createElement('figcaption');
@@ -66,7 +84,13 @@ async function loadGallery(container) {
                 const video = document.createElement('video');
                 video.controls = true;
                 video.preload = 'metadata';
-                video.style.maxHeight = '60vh';
+                video.style.maxHeight = '70vh';
+                video.style.objectFit = 'contain';
+                video.style.aspectRatio = getAspectRatio(item);
+                // keep a tall video fully visible instead of zooming/cropping it
+                if (item.width && item.height && Number(item.height) > Number(item.width)) {
+                    video.style.maxHeight = '78vh';
+                }
                 const src = document.createElement('source');
                 src.src = item.url || item.secure_url || item.secureUrl || '';
                 video.appendChild(src);
@@ -82,6 +106,7 @@ async function loadGallery(container) {
                     }
                 }
 
+                applyMediaFit(video, item);
                 wrapper.appendChild(video);
                 if (contributor) {
                     const cap = document.createElement('figcaption');

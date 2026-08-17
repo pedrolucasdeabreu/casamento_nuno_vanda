@@ -367,7 +367,12 @@ width:100%;
 max-width:100%;
 display:block;
 border-radius:16px;
-object-fit: cover;
+object-fit: contain;
+background: rgba(0, 0, 0, 0.04);
+}
+
+#gallery figure {
+align-items: center;
 }
 
 .card {
