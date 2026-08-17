@@ -352,22 +352,10 @@ z-index: 3;
 text-align: center;
 }
 
-.gallery-page .card {
-    width: min(100%, 900px);
-    height: 520px;
-    padding: 16px 24px 20px;
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-start;
-    overflow: hidden;
-}
-
 .gallery-page #gallery {
     width: 100%;
-    flex: 1;
     margin: 0 auto;
     padding: 0;
-    overflow: hidden;
 }
 
 #gallery figure {
