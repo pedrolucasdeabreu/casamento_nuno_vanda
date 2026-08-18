@@ -56,6 +56,28 @@ async function loadGallery(container) {
             return '';
         };
 
+        const getDownloadUrl = (item) => {
+            const src = item.url || item.secure_url || item.secureUrl || item.src || '';
+            if (!src) return src;
+            if (src.includes('/upload/') && !src.includes('fl_attachment')) {
+                return src.replace('/upload/', '/upload/fl_attachment/');
+            }
+            return src;
+        };
+
+        const addDownloadButton = (wrapper, item) => {
+            const url = getDownloadUrl(item);
+            if (!url) return;
+            const dl = document.createElement('a');
+            dl.href = url;
+            dl.download = '';
+            dl.className = 'download-btn';
+            dl.title = 'Baixar';
+            dl.setAttribute('aria-label', 'Baixar');
+            dl.textContent = '⬇️';
+            wrapper.appendChild(dl);
+        };
+
         const getAspectRatio = (item) => {
             const width = Number(item && item.width) || 0;
             const height = Number(item && item.height) || 0;
@@ -89,6 +111,7 @@ async function loadGallery(container) {
                 img.src = getThumbUrl(item, 1200);
                 applyMediaFit(img, item);
                 wrapper.appendChild(img);
+                addDownloadButton(wrapper, item);
                 if (contributor) {
                     const cap = document.createElement('figcaption');
                     cap.textContent = contributor;
@@ -130,6 +153,7 @@ async function loadGallery(container) {
 
                 applyMediaFit(video, item);
                 wrapper.appendChild(video);
+                addDownloadButton(wrapper, item);
                 if (contributor) {
                     const cap = document.createElement('figcaption');
                     cap.textContent = contributor;
